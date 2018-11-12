@@ -1,23 +1,14 @@
-version: '2.1'
-
+version: '3.0'
 
 services:
     api:
-        image: node:alpine
+        image: node:8
         entrypoint: ./api-entry.sh
-        environment:
-            - API_ROUTE_PREFIX=/api
-            - PORT=5000
-            - JWT_KEY=arstarst1234
         volumes:
             - ./api/:/api/
             - ./api-entry.sh:/api-entry.sh
-            - ./data/images/:/api/images/
-        depends_on:
-            database:
-                condition: service_healthy
         ports:
-          - 80:80
+          - 80:3000
 
     database:
         image: mongo:latest
@@ -27,7 +18,3 @@ services:
             - MONGO_DATA_DIR=/data/db
         volumes:
             - ./data/db/:/data/db/
-            - ./mongo_init.js:/docker-entrypoint-initdb.d/mongo_init.js
-        command: mongod --auth
-        healthcheck:
-            test: "exit 0"
