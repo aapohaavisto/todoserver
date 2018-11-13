@@ -2,19 +2,23 @@ version: '3.0'
 
 services:
     api:
-        image: node:8
-        entrypoint: ./api-entry.sh
+        image: node:alpine
         volumes:
             - ./api/:/api/
             - ./api-entry.sh:/api-entry.sh
+            - ./wait-for/wait-for:/usr/bin/wait-for
         ports:
           - 80:3000
+        command: sh -c 'wait-for database:27017 -- ./api-entry.sh'
 
     database:
-        image: mongo:latest
+        image: niklashh/mongo
         environment:
             - MONGO_INITDB_ROOT_USERNAME=root
             - MONGO_INITDB_ROOT_PASSWORD=password
             - MONGO_DATA_DIR=/data/db
+            - MONGO_USERNAME=admin
+            - MONGO_PASSWORD=salasana
+            - MONGO_DATABASE=tododata
         volumes:
             - ./data/db/:/data/db/
